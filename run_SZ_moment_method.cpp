@@ -276,7 +276,7 @@ int main(int narg, char *args[])
         
         ofstream ofile;
         string fileAddition = "SZ_moments.TwoTemp.ftau_"+DoubletoString(ftau)+"-Te_"+DoubletoString(fp.Te)+"-Delta_"+DoubletoString(DT_T);
-        SetUpOutput("Two-temperature case", fileAddition, fp, ofile);
+        SetUpOutputString("Two-temperature case", fileAddition, fp, ofile);
 
         // Calculating the precise version
         vector<double> Dn;

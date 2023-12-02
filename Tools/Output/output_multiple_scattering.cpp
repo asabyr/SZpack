@@ -20,7 +20,7 @@ typedef double (*t_av)(double, int);
 
     //TODO: check output format -- overwriting SetUpOutput from outputs? Look into this more carefully
 template <typename somestream>
-void SetUpOutput(string description, string fileAddition, Parameters &fp, somestream &ofile, int precision, bool printHeader){
+void SetUpOutputString(string description, string fileAddition, Parameters &fp, somestream &ofile, int precision, bool printHeader){
     print_message(description);
     
     string filename = fp.outputPath+fileAddition+fp.fileEnding;
@@ -92,7 +92,7 @@ void output_tau_l(int lmax, int np, vector<double> &xc, t_0 tau0, t_av tau_av, o
 void output_tau_l_sphere(int lmax, int np)
 {
     ofstream ofile;
-    SetUpOutput("Calculating the monopoles of tau l using the constant density sphere.",
+    SetUpOutputString("Calculating the monopoles of tau l using the constant density sphere.",
                 "tau_l_sphere", parameters, ofile, 10);
     
     vector<double> xc(np);
@@ -112,7 +112,7 @@ void output_tau_l_beta(int lmax, int np, double beta)
     isothermalBeta::setBeta(beta);
 
     ofstream ofile;
-    SetUpOutput("Calculating the monopoles of tau l using the isothermal beta model.",
+    SetUpOutputString("Calculating the monopoles of tau l using the isothermal beta model.",
                 "tau_l_beta", parameters, ofile, 10);
 
 
@@ -132,7 +132,7 @@ void output_DI2_E_temperature(Parameters &fp)
 {
     ofstream ofile;
     string temperature = to_string(fp.Te) + "keV";
-    SetUpOutput("Calculating multiply, D12_E_: "+ temperature, "DI2_E."+temperature, fp, ofile, 8);
+    SetUpOutputString("Calculating multiply, D12_E_: "+ temperature, "DI2_E."+temperature, fp, ofile, 8);
 
     double The2 = pow(fp.calc.The, 2);
     vector<double> a(3);
@@ -172,7 +172,7 @@ void output_SZ_signal_l(Parameters &fp)
 {
     ofstream ofile;
     string temperature = to_string(fp.Te) + "keV";
-    SetUpOutput("Calculating multiply, signal: "+ temperature, "DI_signal."+temperature, fp, ofile, 8);
+    SetUpOutputString("Calculating multiply, signal: "+ temperature, "DI_signal."+temperature, fp, ofile, 8);
     
     for(int m = 0; m < parameters.gridpoints; m++)
     {
@@ -211,7 +211,7 @@ void output_SZ_signal_l(Parameters &fp)
 void output_emission_absorption(Parameters &fp)
 {
     ofstream ofile;
-    SetUpOutput("Calculating emission absorption", "spatial_data", fp, ofile, 10);
+    SetUpOutputString("Calculating emission absorption", "spatial_data", fp, ofile, 10);
     
     double tau0v = isothermalBeta::tau0(0);
     
@@ -233,7 +233,7 @@ void output_emission_absorption(Parameters &fp)
 void output_emission_absorption_kinetic(Parameters &fp)
 {
     ofstream ofile;
-    SetUpOutput("Calculating kinetic emission absorption", "spatial_data.kinetic", fp, ofile, 10);
+    SetUpOutputString("Calculating kinetic emission absorption", "spatial_data.kinetic", fp, ofile, 10);
     
     double tau0v = isothermalBeta::tau0(0);
     
@@ -269,7 +269,7 @@ void output_emission_absorption_kinetic(Parameters &fp)
 void output_CMB_isotropy_signals(Parameters &fp)
 {
     ofstream ofile;
-    SetUpOutput("Calculating the CMB isotropy signals", "CMB_scattering.Te_"+to_string(fp.Te)+"keV",fp, ofile, 8);
+    SetUpOutputString("Calculating the CMB isotropy signals", "CMB_scattering.Te_"+to_string(fp.Te)+"keV",fp, ofile, 8);
     
     for(int m = 0; m < fp.gridpoints; m++)
     {
@@ -297,7 +297,7 @@ void output_CMB_isotropy_signals(Parameters &fp)
 void output_CMB_isotropy_Y_functions(Parameters &fp)
 {
     ofstream ofile;
-    SetUpOutput("Calculating correction functions.", "CMB_scattering.Y", fp, ofile, 8);
+    SetUpOutputString("Calculating correction functions.", "CMB_scattering.Y", fp, ofile, 8);
 
     vector<double> Y(3);
     
@@ -355,7 +355,7 @@ void output_lowest_order_signal_model(double b, double ISA, double scale, double
 void output_lowest_order_signal(Parameters &fp, double b)
 {
     ofstream ofile;
-    SetUpOutput("Calculating lowest order signal.", "lowest_order", fp, ofile, 8);
+    SetUpOutputString("Calculating lowest order signal.", "lowest_order", fp, ofile, 8);
 
     vector<double> Y(3);
 

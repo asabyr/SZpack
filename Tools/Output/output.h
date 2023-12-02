@@ -11,6 +11,14 @@
 #include <string>
 #include <vector>
 
+#include <cmath>
+#include <iomanip>
+#include <iostream>
+
+#include "ModeFunctions.h"
+#include "global_functions.h"
+#include "physical_consts.h"
+
 #include "Parameters.h"
 #include "SZpack.h"
 
@@ -32,10 +40,19 @@ void output_header(somestream &ofile, string methodDescription, Parameters fpara
 void output_to_file(ofstream &f, double x, double Dn, double T0_CMB, double unit_conversion);
 
 template <typename somestream>
-void SetUpOutput(string description, method Method, Parameters fp, somestream &ofile);
+void SetUpOutput(string description, method Method, Parameters fp, somestream &ofile){
+    print_message(description + Method.description);
+    
+    string filename = fp.outputPath+Method.fileAddition+fp.fileEnding;
+
+    ofile.open(filename.c_str());
+    ofile.precision(16);
+
+    output_header(ofile, Method.description, fp);
+}
 
 template <typename somestream>
-void SetUpOutput(string description, string fileAddition, Parameters fp, somestream &ofile,
+void SetUpOutputString(string description, string fileAddition, Parameters fp, somestream &ofile,
                  bool printHeader = false);
 
 //==================================================================================================

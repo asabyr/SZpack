@@ -230,7 +230,7 @@ int main(int narg, char *args[])
         ofstream ofile;
 
         parameters.fileEnding = "_Null"+parameters.fileEnding;
-        SetUpOutput("Computing null of SZ signal", fileAddition, parameters, ofile);
+        SetUpOutputString("Computing null of SZ signal", fileAddition, parameters, ofile);
         ofile << "#\n# Output format: Te [K] | x0 = (h nu/k T0) :  x_null - x0 (for each element in array) ";
         ofile << "| -(d2/dx2(I) / d/dx(I)) at x0" << endl;
 
@@ -351,7 +351,7 @@ int main(int narg, char *args[])
         
         ofstream ofile;
         string fileAddition = "SZ_moments.TwoTemp.ftau_"+DoubletoString(ftau)+"-Te_"+DoubletoString(fp.Te)+"-Delta_"+DoubletoString(DT_T);
-        SetUpOutput("Two-temperature case", fileAddition, fp, ofile);
+        SetUpOutputString("Two-temperature case", fileAddition, fp, ofile);
 
         // Calculating the precise version
         vector<double> Dn;

@@ -8,14 +8,6 @@
 
 #include "output.h"
 
-#include <cmath>
-#include <iomanip>
-#include <iostream>
-
-#include "ModeFunctions.h"
-#include "global_functions.h"
-#include "physical_consts.h"
-
 //==================================================================================================
 //
 // Output for files
@@ -57,7 +49,7 @@ void output_to_file(ofstream &f, double x, double Dn, double T0_CMB, double unit
 }
 
 template <typename somestream>
-void SetUpOutput(string description, string fileAddition, Parameters fp, somestream &ofile, bool printHeader){
+void SetUpOutputString(string description, string fileAddition, Parameters fp, somestream &ofile, bool printHeader){
     print_message(description);
     
     string filename = fp.outputPath+fileAddition+fp.fileEnding;
@@ -68,18 +60,6 @@ void SetUpOutput(string description, string fileAddition, Parameters fp, somestr
     if (printHeader) {
         output_header(ofile, description, fp);
     }
-}
-
-template <typename somestream>
-void SetUpOutput(string description, method Method, Parameters fp, somestream &ofile){
-    print_message(description + Method.description);
-    
-    string filename = fp.outputPath+Method.fileAddition+fp.fileEnding;
-
-    ofile.open(filename.c_str());
-    ofile.precision(16);
-
-    output_header(ofile, Method.description, fp);
 }
 
 //==================================================================================================
@@ -202,7 +182,7 @@ void output_derivatives(double Te, int kmax, Parameters fp)
     ofstream ofile;
 
     string fileAddition = "SZ_moments.derivs."+to_string(int(Te))+"keV";
-    SetUpOutput("Computing derivatives of S in CMB rest frame", fileAddition, fp, ofile);
+    SetUpOutputString("Computing derivatives of S in CMB rest frame", fileAddition, fp, ofile);
     ofile << "#\n# Output format: x = (h nu/k T0) | th-SZ terms in MJy/sr | k-SZ terms in MJy/sr "; 
     ofile << "| k-SZ second order terms in MJy/sr | k-SZ perpendicular terms in MJy/sr ";
     ofile << "| x derivatives in MJy/sr " << endl; 

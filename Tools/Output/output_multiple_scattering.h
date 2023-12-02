@@ -22,7 +22,7 @@ typedef double (*t_0)(double);
 typedef double (*t_av)(double, int);
 
 template <typename somestream>
-void SetUpOutput(string description, string fileAddition, Parameters &fp, somestream &ofile, int precision, bool printHeader);
+void SetUpOutputString(string description, string fileAddition, Parameters &fp, somestream &ofile, int precision, bool printHeader);
 
 //==================================================================================================
 //

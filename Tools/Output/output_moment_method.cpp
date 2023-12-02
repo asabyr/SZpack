@@ -195,7 +195,7 @@ void output_distortion_moments_isothermal(SZ_moment_method &SZM, string mess, Pa
 {
     ofstream ofile;
 
-    SetUpOutput("Using moment method for isothermal cluster to obtain SZ signal"+mess, "SZ_moments_isothermal", fp, ofile);
+    SetUpOutputString("Using moment method for isothermal cluster to obtain SZ signal"+mess, "SZ_moments_isothermal", fp, ofile);
     //TODO: check output format
     
     //===============================================================================
@@ -382,7 +382,7 @@ void output_distortion_moments_cluster_VIK(string fileAddition,
     fp.Te = TSZetc[0][1];
     
     ofstream ofile;
-    SetUpOutput("Using moments VIK cluster profiles"+mess, fileAddition, fp, ofile, true);
+    SetUpOutputString("Using moments VIK cluster profiles"+mess, fileAddition, fp, ofile, true);
     //TODO: check output format
         
     for(int n=0; n<(int)fp.xcmb.size(); n++)
@@ -414,7 +414,7 @@ void output_distortion_cluster_VIK_explicit(string fileAddition, SZ_cluster_prof
                                                double x_rc, double y_rc, Parameters fp)
 {
     ofstream ofile;
-    SetUpOutput("Explicitly calculating line-of-sight-integral", fileAddition, fp, ofile, true);
+    SetUpOutputString("Explicitly calculating line-of-sight-integral", fileAddition, fp, ofile, true);
     //TODO: check output format
     
     //===============================================================================
@@ -503,9 +503,9 @@ void output_distortion_cluster_yk(double y_rc,
     fp.fileEnding = ".y_"+to_string((int) y_rc)+"kpc";
 
     ofstream ofile_y, ofile_rho, ofile_w;
-    SetUpOutput("", "yk", fp, ofile_y);
-    SetUpOutput("", "rhok", fp, ofile_rho);
-    SetUpOutput("", "wk", fp, ofile_w);
+    SetUpOutputString("", "yk", fp, ofile_y);
+    SetUpOutputString("", "rhok", fp, ofile_rho);
+    SetUpOutputString("", "wk", fp, ofile_w);
     //TODO: check output format
     
     
@@ -537,7 +537,7 @@ void output_distortion_cluster_yk(double y_rc,
 void compute_degeneracy_functions(Parameters fp)
 {
     ofstream ofile;
-    SetUpOutput("Computing the degeneracy coefficients", "SZ_moments_degeneracies.bc_"+ to_string(fp.betac), fp, ofile);
+    SetUpOutputString("Computing the degeneracy coefficients", "SZ_moments_degeneracies.bc_"+ to_string(fp.betac), fp, ofile);
     //TODO: check output format
     
     fp.Dtau = 1.0;
@@ -615,7 +615,7 @@ void output_TSZ_bestfit(SZ_cluster_profiles &CL, SZ_moment_method &SZM, Paramete
     init_xarr(1.0e-5, x_rc_max/PSP.zsc, &lz[0], np, 1, 0); 
     
     ofstream ofile;
-    SetUpOutput("Determining TSZ best fits", "SZ_moments_TSZ.bestfit", fp, ofile);
+    SetUpOutputString("Determining TSZ best fits", "SZ_moments_TSZ.bestfit", fp, ofile);
     //TODO: check output format
     
     double tau, ySZ, TSZ;

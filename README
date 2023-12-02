@@ -1,6 +1,6 @@
 //==================================================================================================
 //
-// SZpack version 2.0.0 (Aug 2021)						   		            
+// SZpack version 2.0.0 (December 2023)						   		            
 //
 //==================================================================================================
 //
@@ -40,7 +40,7 @@
 //		Nozawa et al. ApJ, 1998 
 //      Nozawa et al. Nuovo Cimento B Series, 2006
 //
-// (iii) bugs will be immediately reported to Jens@Chluba.de TODO: Check what emails should go here
+// (iii) bugs will be immediately reported to SZpack.code@gmail.com
 //
 //==================================================================================================
 
@@ -49,7 +49,7 @@
 
 DESCRIPTION:
 
-This tar-ball contains the software package SZpack which allows computation of the thermal and 
+This repository contains the software package SZpack which allows computation of the thermal and 
 kinematic SZ effect. Both explicit numerical integration as well as approximate representation of 
 the SZ signals can be obtained. Variations of the electron temperature and bulk velocity along the 
 line-of-sight can be included. Depending on the routine, calculations are carried out in the 
@@ -71,7 +71,7 @@ A full documentation can be found at TODO: Write these : Scientific, python and 
 
 //==================================================================================================
 
-Update (12.08.2021 | SZpack v2.0.0)
+Update (12.08.2021 | SZpack v2.0.0 prerelease)
 
     - large structural overhaul.
     - python package reworked into a complete wrapper of the code.
