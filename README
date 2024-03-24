@@ -1,6 +1,6 @@
 //==================================================================================================
 //
-// SZpack version 2.0.0 (Aug 2021)						   		            
+// SZpack version 2.0.0 (Mar 2024)						   		            
 //
 //==================================================================================================
 //
@@ -30,7 +30,7 @@
 // (ii) the paper of
 //
 //	 	Chluba, Nagai, Sazonov, Nelson, MNRAS, 2012 (arXiv:1205.5778)
-//	 	Chluba, Switzer, Nagai, Nelson, 2012, arXiv:1211.3206
+//	 	Chluba, Switzer, Nagai, Nelson, 2012, (arXiv:1211.3206)
 //
 // 	will be cited, and the following papers are considered for citation:
 //		
@@ -39,8 +39,10 @@
 //		Itoh et al., ApJ, 1998
 //		Nozawa et al. ApJ, 1998 
 //      Nozawa et al. Nuovo Cimento B Series, 2006
+//      Lee, Chluba & Holder, MNRAS, 2022.
+//      Lee & Chluba, 2024.
 //
-// (iii) bugs will be immediately reported to Jens@Chluba.de TODO: Check what emails should go here
+// (iii) bugs will be immediately reported to SZpack.code@gmail.com
 //
 //==================================================================================================
 
@@ -49,7 +51,7 @@
 
 DESCRIPTION:
 
-This tar-ball contains the software package SZpack which allows computation of the thermal and 
+This repository contains the software package SZpack which allows computation of the thermal and 
 kinematic SZ effect. Both explicit numerical integration as well as approximate representation of 
 the SZ signals can be obtained. Variations of the electron temperature and bulk velocity along the 
 line-of-sight can be included. Depending on the routine, calculations are carried out in the 
@@ -63,15 +65,22 @@ At the moment the following approximations are generally made:
     - the electron distribution function is assumed to be thermal
     
 For details we refer to CNSN, 2012, arXiv:1205.5778 and CSNN, 2012, arXiv:1211.3206.
+The varied background (VB) formulation follows that of Lee, Chluba & Holder, 2022, arXiv:2112.10666
+The multipole kernel formulation follows that of Lee & Chluba, 2024.
 
-A full documentation can be found at TODO: Write these : Scientific, python and c++
+A full documentation is in progress and will be added to this repository when it is complete.
+The python doc-strings can all be accessed via calling help(pySZpack_function).
 
 //==================================================================================================
 
 
 //==================================================================================================
 
-Update (12.08.2021 | SZpack v2.0.0)
+Update (24.03.2024 | SZpack v2.0.0)
+
+    - Inclusion of Multipole kernel and varied background formulations.
+
+Update (12.08.2021 | SZpack v2.0.0 alpha)
 
     - large structural overhaul.
     - python package reworked into a complete wrapper of the code.
@@ -131,7 +140,7 @@ both at CITA and JHU. The main (approved) functions of the library are defined i
 ./runfiles    some example runfile with parameters to call 'run_SZpack'
 
 ./python      A full pybind11 python wrapper can be found here. A exploration of the python 
-+              functionality can be found in PySZpack.ipynb.
+              functionality can be found in PySZpack.ipynb.
 
 //==================================================================================================
 

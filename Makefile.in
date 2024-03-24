@@ -20,10 +20,10 @@ LXXFLAGS =
 # GSL lib
 #===============================================================================
 GSL          = gsl
-GSL_INC_PATH = /usr/local/include/
-GSL_LIB_PATH = /usr/local/lib/
-#GSL_INC_PATH = /opt/local/include/
-#GSL_LIB_PATH = /opt/local/lib/
+#GSL_INC_PATH = /usr/local/include/
+#GSL_LIB_PATH = /usr/local/lib/
+GSL_INC_PATH = /opt/local/include/
+GSL_LIB_PATH = /opt/local/lib/
 LIBSGSL      = -L$(GSL_LIB_PATH) -l$(GSL) -lgslcblas
 
 #===============================================================================
