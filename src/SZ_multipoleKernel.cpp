@@ -39,7 +39,7 @@ MultipoleKernel::MultipoleKernel(int l_i, double s_i, double eta_i, double Int_e
     gamma0 = sqrt(1+eta*eta);
     s_low = log((gamma0-eta)/(gamma0+eta));
     s_high = log((gamma0+eta)/(gamma0-eta));
-    Lpart = mus = mup = r = 0;
+    Lpart = mus = mu = r = 0;
     P.resize(l+3);
     h0.resize(l+1);
     h2.resize(l+1);
@@ -75,16 +75,14 @@ void MultipoleKernel::Calculate_integral_variables(){
     // mu == cosine of angle of gamma  and beta 
     // mup== cosine of angle of gamma' and beta
     // mus== cosine of angle of gamma  and gamma'
-    //==============================================================================================    
-    double gamma2=1.0+eta*eta;
-    //
-    double kappap=(gamma0-eta*mup)/gamma0;
-    double zeta=1.0/(t*pow(gamma0-eta*mup,2));
+    //==============================================================================================   
+    double beta0 = eta/gamma0; 
+    double zeta=t/(pow(gamma0-eta*mu,2));
     double alpha_sc=1.0-mus;
 
     //d2sigma/dmu/dmup as defined equation 2 CNSN
-    double dsig = 3.0/8.0/PI*t/kappap/gamma2*(1.0-zeta*alpha_sc*(1.0-0.5*zeta*alpha_sc));
-    double dphidt = (gamma0-eta*mup)/sqrt(eta*eta*(-1+mup*mup)*(-1+mus*mus)-pow(gamma0-t*gamma0+eta*mup*(t-mus),2));
+    double dsig = 3.0/8.0/PI/gamma0*gamma0*(1.0-zeta*alpha_sc*(1.0-0.5*zeta*alpha_sc));
+    double dphidt = t/sqrt(beta0*beta0*t*t*(-1+mu*mu)*(-1+mus*mus)-pow((t-1)+beta0*mu*(1-t*mus),2));
     double Plmu = 0;
     if (!electron_anisotropy) {
         for (int k=0; k<l+1; k++){
@@ -93,34 +91,36 @@ void MultipoleKernel::Calculate_integral_variables(){
     }
     else {
         for (int k=0; k<l+1; k++){
-            Plmu += pow(-1,k)*Binomial(l,k)*Binomial(l+k,k)*pow((1-mup)/2,k);
+            Plmu += pow(-1,k)*Binomial(l,k)*Binomial(l+k,k)*pow((1-mu)/2,k);
         }
     }
     r = Plmu*dphidt*dsig;
 }
 
-double MultipoleKernel::sigl_Boltzmann_Compton(double int_mup){
-    mup = int_mup;
+double MultipoleKernel::sigl_Boltzmann_Compton(double int_mu){
+    mu = int_mu;
     Calculate_integral_variables();
     return r;
 }
 
-double MultipoleKernel::mup_Int(double mus_int){
-    mus = mus_int;
-    double limitvar = sqrt((-1+mus*mus)*((-1+t)*(-1+t)*gamma0*gamma0-eta*eta*(1+t*t-2*t*mus)));
-    double a=((-1 + t)*gamma0*(t-mus)-limitvar)/(eta*(1+t*t-2*t*mus));
-    double b=((-1 + t)*gamma0*(t-mus)+limitvar)/(eta*(1+t*t-2*t*mus));
+double MultipoleKernel::mu_Int(double int_mus){
+    mus = int_mus;
+    double mus_cr = (2*eta*eta*t-(1-t)*(1-t))/(2*eta*eta*t);
+    double limitvar = eta*t*sqrt(2*t*(1-mus*mus)*(mus_cr-mus));
+    double a=((1 - t)*gamma0*(1- t*mus)-limitvar)/(eta*(1+t*t-2*t*mus));
+    double b=((1 - t)*gamma0*(1- t*mus)+limitvar)/(eta*(1+t*t-2*t*mus));
     double epsrel=Int_eps*0.8, epsabs=1.0e-300;
     
     return Integrate_using_Patterson_adaptive(a, b, epsrel, epsabs, [this](double int_var) { return this->sigl_Boltzmann_Compton(int_var);});
 }
 
 double MultipoleKernel::mus_Int(){
+    double mus_cr = (2*eta*eta*t-(1-t)*(1-t))/(2*eta*eta*t);
     double a=-1.0;
-    double b=(eta*eta*(1+t*t)-pow(-1+t,2)*gamma0*gamma0)/(2*eta*eta*t);
+    double b=mus_cr;
     double epsrel=Int_eps*0.9, epsabs=1.0e-300;
 
-    return Integrate_using_Patterson_adaptive(a, b, epsrel, epsabs, [this](double int_var) { return this->mup_Int(int_var);});
+    return Integrate_using_Patterson_adaptive(a, b, epsrel, epsabs, [this](double int_var) { return this->mu_Int(int_var);});
 }
 
 void MultipoleKernel::Calculate_formula_variables(){
@@ -183,7 +183,7 @@ double MultipoleKernel::Calculate_electron_multipoles(){
         double part1 = (pow(t,m)+1)*(pow(1+beta0,m)-pow(1-beta0,m));
         double part2 = (pow(t,m)-1)*(pow(1+beta0,m)+pow(1-beta0,m));
         double signt = t<1 ? -1.0 : 1.0;
-        K[k] = (part1-signt*part2)/(2*pow(1-beta0,m)*pow(t,m));
+        K[k] = (part1-signt*part2)/(2*pow(1-beta0,m));
     }
 
     vector<double> X0(l+1,0.0), X1(l+1,0.0), X2(l+1,0.0), X3(l+1,0.0), X4(l+1,0.0);
@@ -206,11 +206,11 @@ double MultipoleKernel::Calculate_electron_multipoles(){
 
     vector<double> Pn(l+1,0.0);
     for (int m = 0; m<l+1; m++){
-        Pn[m] = 3*X4[m]/gamma0-6*(1+t)*X3[m]+(3*(1+4*t+t*t)+2*eta*eta*(1+6*t+t*t))*X2[m]/gamma0;
-        Pn[m] += -2*(3+2*eta*eta)*t*(1+t)*X1[m]+(3+4*eta*eta+4*pow(eta,4))*t*t*X0[m]/gamma0;
+        Pn[m] = 3*t*t*X4[m]-6*gamma0*t*(1+t)*X3[m]+((3+2*eta*eta)*(1+t*t)+12*gamma0*gamma0*t)*X2[m];
+        Pn[m] += -2*gamma0*(3+2*eta*eta)*(1+t)*X1[m]+(3+4*eta*eta+4*eta*eta*eta*eta)*X0[m];
     }
 
-    double prefactor = 3/(32*pow(eta,5));
+    double prefactor = 3*t/(32*gamma0*pow(eta,5));
     double lsum = 0;
     for (int m = 0; m<l+1; m++){
         double pref = Binomial(l,m)*Binomial(l+m,m);
@@ -228,7 +228,7 @@ double MultipoleKernel::Calculate_formula(){
     if (!electron_anisotropy) {
         if (s<s_low|| s>s_high) { return 0.0; }
         Calculate_formula_variables();
-        double prefactor = 3/(32*pow(eta,6));
+        double prefactor = 3.0/(32.0*pow(eta,6));
         double lsum = 0;
         for (int n = 0; n<l+1; n++){
             double pref = Binomial(l,n)*Binomial(l+n,n);
@@ -243,44 +243,44 @@ double MultipoleKernel::Calculate_stable(){
     if (s<s_low|| s>s_high) { return 0.0; }
     switch (l) {
     case 0:
-        if (electron_anisotropy && eta >= 0.002917){return Calculate_formula();}
-        if (!electron_anisotropy && eta >= 0.002291){return Calculate_formula();}
+        if (electron_anisotropy && eta >= 0.00151){return Calculate_formula();}
+        if (!electron_anisotropy && eta >= 0.00111){return Calculate_formula();}
         return Calculate_integrated();
     case 1:
-        if (electron_anisotropy && eta >= 0.01072){return Calculate_formula();}
-        if (!electron_anisotropy && eta >= 0.02121){return Calculate_formula();}
+        if (electron_anisotropy && eta >= 0.00599){return Calculate_formula();}
+        if (!electron_anisotropy && eta >= 0.0121){return Calculate_formula();}
         return Calculate_integrated();
     case 2:
-        if (electron_anisotropy && eta >= 0.02488){return Calculate_formula();}
-        if (!electron_anisotropy && eta >= 0.06805){return Calculate_formula();}
+        if (electron_anisotropy && eta >= 0.0161){return Calculate_formula();}
+        if (!electron_anisotropy && eta >= 0.0416){return Calculate_formula();}
         return Calculate_integrated();
     case 3:
-        if (electron_anisotropy && eta >= 0.04971){return Calculate_formula();}
-        if (!electron_anisotropy && eta >= 0.1442){return Calculate_formula();}
+        if (electron_anisotropy && eta >= 0.0331){return Calculate_formula();}
+        if (!electron_anisotropy && eta >= 0.0936){return Calculate_formula();}
         return Calculate_integrated();
     case 4:
-        if (electron_anisotropy && eta >= 0.07960){return Calculate_formula();}
-        if (!electron_anisotropy && eta >= 0.2338){return Calculate_formula();}
+        if (electron_anisotropy && eta >= 0.0538){return Calculate_formula();}
+        if (!electron_anisotropy && eta >= 0.1620){return Calculate_formula();}
         return Calculate_integrated();
     case 5:
-        if (electron_anisotropy && eta >= 0.1244){return Calculate_formula();}
-        if (!electron_anisotropy && eta >= 0.3376){return Calculate_formula();}
+        if (electron_anisotropy && eta >= 0.0840){return Calculate_formula();}
+        if (!electron_anisotropy && eta >= 0.244){return Calculate_formula();}
         return Calculate_integrated();
     case 6:
-        if (electron_anisotropy && eta >= 0.1941){return Calculate_formula();}
-        if (!electron_anisotropy && eta >= 0.4561){return Calculate_formula();}
+        if (electron_anisotropy && eta >= 0.126){return Calculate_formula();}
+        if (!electron_anisotropy && eta >= 0.333){return Calculate_formula();}
         return Calculate_integrated();
     case 7:
-        if (electron_anisotropy && eta >= 0.2541){return Calculate_formula();}
-        if (!electron_anisotropy && eta >= 0.5379){return Calculate_formula();}
+        if (electron_anisotropy && eta >= 0.165){return Calculate_formula();}
+        if (!electron_anisotropy && eta >= 0.419){return Calculate_formula();}
         return Calculate_integrated();
     case 8:
-        if (electron_anisotropy && eta >= 0.3217){return Calculate_formula();}
-        if (!electron_anisotropy && eta >= 0.6561){return Calculate_formula();}
+        if (electron_anisotropy && eta >= 0.219){return Calculate_formula();}
+        if (!electron_anisotropy && eta >= 0.508){return Calculate_formula();}
         return Calculate_integrated();
     case 9:
-        if (electron_anisotropy && eta >= 0.5101){return Calculate_formula();}
-        if (!electron_anisotropy && eta >= 0.7757){return Calculate_formula();}
+        if (electron_anisotropy && eta >= 0.301){return Calculate_formula();}
+        if (!electron_anisotropy && eta >= 0.632){return Calculate_formula();}
         return Calculate_integrated();
     default:
         return Calculate_integrated();
@@ -494,13 +494,13 @@ double IntegralKernel::sig_Boltzmann_Compton(double int_eta){
     else {
         r = Calculate_monopole(l);
     }
-    return r;
+    return eta*eta*r;
 }
 
 double IntegralKernel::eta_Int(double int_s){
     s = int_s;
     if (s==0){ s = 1e-15; }
-    if (fixed_eta){ return sig_Boltzmann_Compton(eta); }
+    if (fixed_eta){ return sig_Boltzmann_Compton(eta)/eta/eta; }
 
     double a=sinh(fabs(s)/2.0), b = 30.0;//lim=30.0, b=lim*(1.0+0.5*lim*0.05);
     double epsrel=Int_eps, epsabs=1.0e-300;

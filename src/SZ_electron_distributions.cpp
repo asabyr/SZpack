@@ -29,7 +29,7 @@ double Boltzmann_Dist_gamma(double eta, double gamma, double Te) {
     double The = Te/const_me;
     double exp_th=f_RM_gamma(gamma, The);
     double norm = norm_f_RM_gamma(The);
-    return eta*eta*exp_th*norm;
+    return exp_th*norm;
 }
 
 //TODO: add non-relativistic Maxwell boltzmann also
@@ -77,13 +77,14 @@ double Norm_FullKinematicModifiedJuttner(double Te, double betac, double muc){
 // The multipole expansion
 double KinematicBoost_Dist(double eta, double Te, double betac, double muc, int l){
     double The = Te/const_me;
-    double gammac = 1/sqrt(1-betac*betac);
+    double gammac = 1.0/sqrt(1.0-betac*betac);
     double gamma = sqrt(1.0+eta*eta);
     double fth = Boltzmann_Dist_gamma(eta, gamma*gammac,Te);
     double Pl = LegendreP(l, muc);
     double A = gammac*betac*eta/The;
-    double norm = sqrt(PI/2/A);
-    return gsl_sf_bessel_Inu(l+0.5,A)*Pl*fth*(2.0*l+1.0)*norm*pow(-1,l);
+    // double norm = sqrt(PI/2/A);
+    // return gsl_sf_bessel_Inu(l+0.5,A)*Pl*fth*(2.0*l+1.0)*norm/gammac;
+    return gsl_sf_bessel_il_scaled(l,A)*exp(fabs(A))*Pl*fth*(2.0*l+1.0)/gammac;
 }
 
 // The betac expansion of the multipole expansion
@@ -105,7 +106,7 @@ double KinematicBoost_Dist_exp(double eta, double Te, double betac, double muc, 
     }
     if (l==1) {
         if (betac_order == 0) { return 0; }
-        double multfactor = -betac*muc*eta/The;
+        double multfactor = betac*muc*eta/The;
         double factor = 1.0;
         if (betac_order < 3) { return factor*multfactor*fth; }
         factor += betac*betac*(eta*eta+5.0*The*(The-gam0))/The/The/10.0;
@@ -115,7 +116,7 @@ double KinematicBoost_Dist_exp(double eta, double Te, double betac, double muc, 
     }
     if (l==2) {
         if (betac_order < 2) { return 0; }
-        double multfactor = betac*betac*(3.0*muc*muc-1.0)*eta*eta/The/The/6.0;
+        double multfactor = betac*betac*(3.0*muc*muc-1.0)*eta*eta/The/The/2.0/3.0;
         double factor = 1.0;
         if (betac_order < 4) { return factor*multfactor*fth; }
         factor += betac*betac*(eta*eta-7.0*gam0*The+14.0*The*The)/The/The/14.0;
@@ -123,7 +124,7 @@ double KinematicBoost_Dist_exp(double eta, double Te, double betac, double muc, 
     }
     if (l==3) {
         if (betac_order < 3) { return 0; }
-        double multfactor = -pow(betac,3)*eta*eta*eta*muc*(-3.0+5.0*muc*muc)/The/The/The/30.0;
+        double multfactor = pow(betac,3)*eta*eta*eta*muc*(-3.0+5.0*muc*muc)/The/The/The/2.0/15.0;
         double factor = 1.0;
         if (betac_order < 5) { return factor*multfactor*fth; }
         factor += betac*betac*(eta*eta-9.0*gam0*The+27.0*The*The)/The/The/18.0;

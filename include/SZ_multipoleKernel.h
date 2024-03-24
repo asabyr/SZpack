@@ -43,7 +43,7 @@ class MultipoleKernel{
     private:
     int l;
     double s, t, eta, gamma0;
-    double Int_eps, mus, mup, r; 
+    double Int_eps, mus, mu, r; 
     double Lpart;
     vector<double> P, h0, h2, h4, K1, K2; 
     double s_low, s_high;
@@ -58,8 +58,8 @@ class MultipoleKernel{
 
     private:
     void Calculate_integral_variables();
-    double sigl_Boltzmann_Compton(double mup_int);
-    double mup_Int(double mus_int);
+    double sigl_Boltzmann_Compton(double int_mu);
+    double mu_Int(double int_mus);
     double mus_Int();
     void Calculate_formula_variables();
 
