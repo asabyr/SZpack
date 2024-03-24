@@ -288,104 +288,6 @@ double MultipoleKernel::Calculate_stable(){
 }
 
 //==================================================================================================
-// Beam Kernel
-//==================================================================================================
-BeamKernel::BeamKernel()
-    : BeamKernel(0, 0.0, 1.0, 0.0) {}
-
-BeamKernel::BeamKernel(int l_i, double s_i, double eta_i, double mup_i){
-    Update_l(l_i);
-    Update_s(s_i);
-    eta = eta_i;
-    mup = mup_i;
-    gamma0 = sqrt(1+eta*eta);
-    f0 = f1 = f2 = 0.0;
-}
-
-vector<double> BeamKernel::s_limits(){
-    vector<double> lims;
-    lims.resize(2);
-    lims[0] = log((gamma0-eta)/(gamma0-eta*mup));
-    lims[1] = log((gamma0+eta)/(gamma0-eta*mup));
-    return lims;
-}
-
-vector<double> BeamKernel::mup_limits(){
-    vector<double> lims;
-    lims.resize(2);
-    double temp = (gamma0*(t-1)-eta)/(eta*t);
-    lims[0] = (temp < -1.0) ? -1.0 : temp;
-    temp = (gamma0*(t-1)+eta)/(eta*t);
-    lims[1] = (temp > 1.0) ? 1.0 : temp;
-    return lims;
-}
-
-void BeamKernel::Update_s(double s_i){
-    s = s_i;
-    t = exp(s);
-}
-
-void BeamKernel::Update_l(int l_i){
-    l = l_i;
-    if (l < 0){
-        l = 0;
-        print_error("l is out of bounds, it must be >=0. l is now set to 0.");
-    }
-}
-
-void BeamKernel::Calculate_monopole(){
-    double denominator = (32*(pow(eta,3.0))*gamma0*t*pow(gamma0 - eta*mup,4.0))/3.0;
-    double part1a = (t-1)*(t-1)*(3*mup*mup - 1)+(eta*eta)*(2-2*t+3*t*t +(2-18*t+14*t*t)*mup*mup + 3*(t*t)*pow(mup,4.0));
-    double part1b = 4*pow(eta,4.0)*t*(-1+2*t+(-3+9*t)*mup*mup +t*pow(mup,4.0))+4*pow(eta,6.0)*(t*t)*(1+6*mup*mup + pow(mup,4.0));
-    double part2 = -2*eta*gamma0*mup*((t-1)*(-2+t+3*t*mup*mup)- 2*(eta*eta)*t*(3-5*t+(1-3*t)*mup*mup)+8*pow(eta,4.0)*(t*t)*(1+mup*mup));
-    f0 = (part1a+part1b+part2)/denominator;
-}
-
-void BeamKernel::Calculate_dipole(){
-    double denominator = (32*pow(eta,4.0)*gamma0*t*pow(gamma0 - eta*mup,4.0))/3.0;
-    double part1a = eta*(t-1)*(t-1) *(2-2*t-3*(2+t)*mup*mup +15*t*pow(mup,4.0));
-    double part1b = eta*(eta*eta)*(2*t*(-3+5*t-2*t*t)+(-4+24*t-26*t*t+11*t*t*t)*mup*mup +6*t*(3-12*t+8*t*t)*pow(mup,4.0) +5*(t*t*t)*pow(mup,6.0));
-    double part1c = eta*2*pow(eta,4.0)*t*(t*(2-t)+(6-22*t+17*t*t)*mup*mup +(2-28*t+37*t*t)*pow(mup,4.0) + 3*t*t*pow(mup,6.0));
-    double part1d = eta*4*pow(eta,6.0)*(t*t)*(mup*mup)*(-4+5*t+2*(-2+5*t)*mup*mup +t*pow(mup,4.0));
-    double part2a = -gamma0*mup*(pow(t-1,3.0)*(5*mup*mup -3)+(eta*eta)*(t-1)*(2+10*t-7*(t*t)+(2-34*t+20*t*t)*mup*mup +15*(t*t)*pow(mup,4.0)));
-    double part2b = -gamma0*mup*4*pow(eta,4.0)*t*(1+(-1+t)*(-3+14*t)*mup*mup + 3*t*(-1+2*t)*pow(mup,4.0));
-    double part2c = -gamma0*mup*(-4*pow(eta,6.0)*(t*t)*(1-t+(6-10*t)*mup*mup+(1-5*t)*pow(mup,4.0)));
-    f1 = (part1a+part1b+part1c+part1d+part2a+part2b+part2c)/denominator;
-}
-
-void BeamKernel::Calculate_quadrupole(){
-    double denominator = (32*pow(eta,5.0)*gamma0*t*pow(gamma0 - eta*mup,4.0))/3.0; 
-    double part1a = 3*pow(-1+t,4.0)*(3-30*mup*mup +35*pow(mup,4.0));
-    double part1b = 2*(eta*eta)*(-1+t)*(-1+t) *((-4-6*t -3*t*t)-3*(8-108*t+69*t*t)*mup*mup +15*(4-34*t+9*t*t)*pow(mup,4.0) +315*(t*t)*pow(mup,6.0));
-    double part1c = pow(eta,4.0)*((-8+56*t-132*t*t +156*t*t*t -63*pow(t,4.0))-4*(-4-84*t+437*t*t -561*t*t*t +225*pow(t,4.0))*mup*mup);
-    double part1d = pow(eta,4.0)*(6*(4-156*t+574*t*t-586*t*t*t+189*pow(t,4.0))*pow(mup,4.0)+60*t*t*(15-47*t+29*t*t)*pow(mup,6.0)+105*pow(t,4.0)*pow(mup,8.0));
-    double part1e = 8*pow(eta,6.0)*t*(-(-2+3*t)*(1-5*t+3*t*t)-3*t*(23-61*t+36*t*t)*mup*mup);
-    double part1f = 8*pow(eta,6.0)*t*((-18+229*t-453*t*t +210*t*t*t)*pow(mup,4.0)+3*t*(15-93*t+92*t*t)*pow(mup,6.0)+15*(t*t*t)*pow(mup,8.0)) ;
-    double part1g = 8*pow(eta,6.0)*(t*t)*(-1+3*mup*mup)*((2-6*t+3*t*t)+3*(4-20*t+15*t*t)*mup*mup +(2-30*t+45*t*t)*pow(mup,4.0) + 3*(t*t)*pow(mup,6.0));
-    double part2a = -4*eta*gamma0*mup*(3*pow(t-1,3.0)*(6-3*t-10*(1+2*t)*mup*mup +35*t*pow(mup,4.0)));
-    double part2b = -4*eta*gamma0*mup*(eta*eta *(t-1)*((4-74*t+120*t*t -63*t*t*t)-3*(4-32*t-28*t*t +31*t*t*t)*mup*mup));
-    double part2c = -4*eta*gamma0*mup*(eta*eta *(t-1)*(45*t*(2-12*t +7*t*t)*pow(mup,4.0) + 105*(t*t*t)*pow(mup,6.0)));
-    double part2d = -4*eta*gamma0*mup*(2*pow(eta,4.0)*t*((6-58*t+99*t*t -45*t*t*t)-(16-72*t+27*t*t +27*t*t*t)*mup*mup));
-    double part2e = -4*eta*gamma0*mup*(2*pow(eta,4.0)*t*(3*(-2+54*t-153*t*t+95*t*t*t)*pow(mup,4.0) +15*t*t*(-3+5*t)*pow(mup,6.0))); 
-    double part2f = -4*eta*gamma0*mup*(4*pow(eta,4.0)*(t*t)*(3*mup*mup-1)*((-4+3*t)*(-1+3*t)+2*(2-15*t+15*t*t)*mup*mup +3*t*(-1+3*t)*pow(mup,4.0)));
-    f2 = (part1a+part1b+part1c+part1d+part1e+part1f+part1g+part2a+part2b+part2c+part2d+part2e+part2f)/denominator;
-}
-
-double BeamKernel::Calculate_formula(){
-    if (l == 1){ 
-        Calculate_dipole();
-        return f1;
-    }
-    if (l == 2){ 
-        Calculate_quadrupole();
-        return f2;
-    }
-    Calculate_monopole();
-    return f0;
-}
-
-
-//==================================================================================================
 // Integration Class
 //==================================================================================================
 IntegralKernel::IntegralKernel()
@@ -401,9 +303,8 @@ IntegralKernel::IntegralKernel(double x_i, double betac_i, double muc_i, double 
     run_mode = "";
     etaDistribution = plainDistribution;
     MK = MultipoleKernel(l, s, eta, Int_eps);
-    BK = BeamKernel(l, s, eta, 0.0);
     xfac = 1.0;
-    beam_kernel=fixed_eta=false;
+    fixed_eta=false;
     electron_anisotropy = true;
 }
 
@@ -419,15 +320,10 @@ void IntegralKernel::Update_x(double x_i){
 void IntegralKernel::Calculate_shared_variables(){
     xp = x*exp(s);
     MK = MultipoleKernel(l, s, eta, Int_eps);
-    BK = BeamKernel(l, s, eta, mup);
     MK.electron_anisotropy = electron_anisotropy;
 }
 
 double IntegralKernel::Calculate_kernel(int l_i){
-    if (beam_kernel){
-        BK.Update_l(l_i);
-        return BK.Calculate_formula();
-    }
     MK.Update_l(l_i);
     return MK.Calculate_stable();
 }
@@ -545,32 +441,6 @@ double IntegralKernel::compute_distortion_fixed_eta(string mode, double eta_i, i
     return result;
 }
 
-double IntegralKernel::compute_beam_distortion(double mup_i, string mode, electronDistribution eDistribution, int l_i){
-    beam_kernel = true;
-    mup = mup_i;
-    double result = compute_distortion(mode, eDistribution, l_i);
-    beam_kernel = false;
-    return result;
-}
-
-double IntegralKernel::compute_beam_kernel(double mup_i, int l_i, double s_i, electronDistribution eDistribution){
-    beam_kernel = true;
-    mup = mup_i;
-    double result = compute_kernel(l_i, s_i, eDistribution);
-    beam_kernel = false;
-    return result;
-}
-
-double IntegralKernel::compute_beam_distortion_fixed_eta(double mup_i, string mode, double eta_i, int l_i){
-    fixed_eta = beam_kernel = true;
-    eta = eta_i;
-    mup = mup_i;
-    double result = compute_distortion(mode, etaDistribution, l_i);
-    fixed_eta = beam_kernel = false;
-    return result;
-}
-
-
 //==================================================================================================
 //
 // 3D integration carried out using Patterson scheme
@@ -611,34 +481,6 @@ void compute_SZ_distortion_fixed_eta(vector<double> &Dn, Parameters &fp, bool DI
     for(int k = 0; k < fp.gridpoints; k++){
         szDistortion.Update_x(fp.xcmb[k]);
         Dn[k] = fp.Dtau*szDistortion.compute_distortion_fixed_eta(fp.rare.RunMode, eta, l_i, e_anis);
-        if (DI) { Dn[k] *= pow(fp.xcmb[k],3.0)*fp.rare.Dn_DI_conversion(); }
-    }
-}
-
-void compute_SZ_distortion_beam_kernel(vector<double> &Dn, Parameters &fp, bool DI, double mup, std::function<double(double)> eDistribution, int l_i){
-    Dn.resize(fp.gridpoints);
-    IntegralKernel szDistortion = IntegralKernel(fp.xcmb[0], fp);
-    for(int k = 0; k < fp.gridpoints; k++){
-        szDistortion.Update_x(fp.xcmb[k]);
-        Dn[k] = fp.Dtau*szDistortion.compute_beam_distortion(mup, fp.rare.RunMode, eDistribution, l_i);
-        if (DI) { Dn[k] *= pow(fp.xcmb[k],3.0)*fp.rare.Dn_DI_conversion(); }
-    }
-}
-
-void compute_averaged_beam_kernel(vector<double> &Dn, Parameters &fp, double mup, std::function<double(double)> eDistribution, int l_i){
-    Dn.resize(fp.gridpoints);
-    IntegralKernel szDistortion = IntegralKernel(0,fp);
-    for(int k = 0; k < fp.gridpoints; k++){
-        Dn[k] = szDistortion.compute_beam_kernel(mup, l_i, fp.kernel.srange[k], eDistribution);
-    }
-}
-
-void compute_SZ_distortion_beam_kernel_fixed_eta(vector<double> &Dn, Parameters &fp, bool DI, double mup, double eta, int l_i){
-    Dn.resize(fp.gridpoints);
-    IntegralKernel szDistortion = IntegralKernel(fp.xcmb[0], fp);
-    for(int k = 0; k < fp.gridpoints; k++){
-        szDistortion.Update_x(fp.xcmb[k]);
-        Dn[k] = fp.Dtau*szDistortion.compute_beam_distortion_fixed_eta(mup, fp.rare.RunMode, eta, l_i);
         if (DI) { Dn[k] *= pow(fp.xcmb[k],3.0)*fp.rare.Dn_DI_conversion(); }
     }
 }

@@ -27,23 +27,6 @@ void init_ex_kernel(py::module_ &m){
                     "A function to calculate the SZ signal for a fixed momentum electron population."
                     "e_anisotropy determines which of the anisotropic electron or photon kernels is used.");
 
-//Calculating distortions through the beam kernel
-    m.def("beam_distortion", [](const std::function<double(double)> &eDist, double mup, Parameters fp, bool DI, int l){
-                    vector<double> Dn; compute_SZ_distortion_beam_kernel(Dn, fp, DI, mup, eDist, l);
-                    return py::array(Dn.size(), Dn.data());}, "electronDist"_a, "mup"_a, "Params"_a, "DI"_a=true, "l"_a=0,
-                    "A function to calculate the SZ signal for a beam-like given electron distribution.");
-
-    m.def("beam_averaged_kernel", [](const std::function<double(double)> &eDist, double mup, Parameters fp, int l){
-                    if (l>= 0) {fp.kernel.l = l;}
-                    vector<double> K; compute_averaged_beam_kernel(K, fp, mup, eDist, l);
-                    return py::array(K.size(), K.data());}, "electronDist"_a, "mup"_a, "Params"_a, "l"_a=0,
-                    "A function to calculate electron distribution averaged beam kernel.");
-
-    m.def("beam_distortion_fixed_momentum", [](double eta, double mup, Parameters fp, bool DI, int l){
-                    vector<double> Dn; compute_SZ_distortion_beam_kernel_fixed_eta(Dn, fp, DI, mup, eta, l);
-                    return py::array(Dn.size(), Dn.data());}, "eta"_a, "mup"_a, "Params"_a, "DI"_a=true, "l"_a=0,
-                    "A function to calculate the SZ signal for a beam-like fixed momentum electron population.");
-
 // Multipole Kernel Implementation
     m.def("kernel_formula", [](int l, vector<double> s_array, double eta, bool e_anis) {
                     int np = s_array.size(); vector<double> K; K.resize(np); 
@@ -84,26 +67,6 @@ void init_ex_kernel(py::module_ &m){
                     "eta"_a, "A function to calculate the minimum and maximum s values that can be scattered to, given an "
                     "input electron energy.");
 
-//Beam Kernel Implementation
-    m.def("beam_kernel_formula", [](int l, vector<double> s_array, double eta, double mup){
-                    int np = s_array.size(); vector<double> K; K.resize(np);
-                    BeamKernel BK = BeamKernel(l, s_array[0], eta, mup);
-                    K[0] = BK.Calculate_formula();
-                    for (int var = 1; var < np; var++){
-                        BK.Update_s(s_array[var]); K[var] = BK.Calculate_formula();
-                    } return py::array(K.size(), K.data());},
-                    "l"_a, "s_array"_a, "eta"_a, "mup"_a, "A function to calculate the beam kernel from the analytic "
-                    "formula. (See Lee et al. 2021 for more details)");
-
-    m.def("beam_s_limits", [](double eta, double mup){ BeamKernel BK = BeamKernel(0, 0.0, eta, mup); 
-                    return BK.s_limits();}, "eta"_a, "mup"_a,
-                    "A function to calculate the minimum and maximum s values that can be scattered to, given an input "
-                    "electron energy and angle.");
-
-    m.def("beam_mup_limits", [](double eta, double s){ BeamKernel BK = BeamKernel(0, s, eta, 0.0);
-                    return BK.mup_limits();}, "eta"_a, "s"_a,
-                    "A function to calculate the minimum and maximum mup values that can be scattered to, given an "
-                    "input energy and energy ratio.");
     //Calculating distortions through the multipole kernel
     m.def("distortion_5D", [](const std::function<double(double, double, double)> &eDist, Parameters fp, bool DI){
                     vector<double> Dn; compute_SZ_distortion_5DnonThermal(Dn, fp, DI, eDist);
