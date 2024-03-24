@@ -14,6 +14,13 @@ void init_ex_e_dists(py::module_ &m){
     m.def("boltzmann", &Boltzmann_Dist, "eta"_a, "Te"_a=5.0, 
             "The maxwell-juttner, 'relativistic boltzmann' distribution. This is the standard distribution used in SZ calculations. "
             "See the documentation for more details.");
+    m.def("kinematic_boost", &KinematicBoost_Dist, "eta"_a, "Te"_a=5.0, "betac"_a=0.1,"muc"_a=1.0, "l"_a=0, 
+            "The kinematic boosted maxwell-juttner, 'relativistic boltzmann' distribution. When used in conjunction with the electron anisotropy "
+            "kernels, this allows for the calculation of the kinematic SZ effect. See the documentation for more details.");
+    m.def("kinematic_boost_exp", &KinematicBoost_Dist_exp, "eta"_a, "Te"_a=5.0, "betac"_a=0.1,"muc"_a=1.0, "l"_a=0, "betac_order"_a=5, 
+            "An expansion of kinematic boosted maxwell-juttner, 'relativistic boltzmann' distribution about betac=0. Valid for betac_order <= 5 and l<=3 "
+            "outside of these ranges, the kinematic_boost form is used. When used in conjunction with the electron anisotropy "
+            "kernels, this allows for the calculation of approximations of the kinematic SZ effect. See the documentation for more details.");
     m.def("cosmic_ray", &CosmicRay_Dist, "eta"_a, "alpha"_a=2.5, "p1"_a=0.1, "p2"_a=10.0,
             "This is a power-law distribution, with -alpha as the exponent and p1 and p2 as the momentum cut offs, i.e., for p1 < eta < p2. "
             "Everywhere else the distribution returns 0. See the documentation or Ensslin & Kaiser (2000) for more details.");
@@ -36,4 +43,16 @@ void init_ex_e_dists(py::module_ &m){
             "eta"_a, "Te"_a=5.0, "c"_a=c_default, "a"_a=a_default,
             "A distribution to mimic multiple overlaying thermal distributions. The arrays c and a represent the expansion coefficients of this "
             "method. See the documentation or Kaastra et al. (2009) for more details.");
+    // The full functions for f(eta, mup, phip)        
+    m.def("full_kinematic_boost", &FullKinematicBoost_Dist, "eta"_a, "mup"_a, "phip"_a, "Te"_a=5.0, "betac"_a=0.1,"muc"_a=1.0, 
+            "The full 3D kinematic boosted maxwell-juttner, 'relativistic boltzmann' distribution. When used in conjunction "
+            "with the 5D non-thermal kernel, this allows for the calculation of the kinematic SZ effect. "
+            "See the documentation for more details.");
+    m.def("full_kinematic_boost_modified_Juttner", &FullKinematicModifiedJuttner, "eta"_a, "mup"_a, "phip"_a, "Te"_a=5.0, "betac"_a=0.1,"muc"_a=1.0, 
+            "The full 3D kinematic boosted modified maxwell-juttner distribution. When used in conjunction "
+            "with the 5D non-thermal kernel, this allows for the calculation of the kinematic SZ effect. (?) "
+            "See the documentation for more details.");
+    m.def("full_kinematic_boost_modified_Juttner_norm", &Norm_FullKinematicModifiedJuttner, "Te"_a=5.0, "betac"_a=0.1,"muc"_a=1.0, 
+            "This is the normalising factor for the full 3D kinematic boosted modified maxwell-juttner distribution. "
+            "This is a multiplicative factor calculated numerically.");
 }

@@ -25,16 +25,23 @@
 
 //TODO: Fill in the sources for these
 //==================================================================================================
-// 
 // The electron momentum distribution for thermal electrons
-//
 //==================================================================================================
 double Boltzmann_Dist(double eta, double Te);
+double Boltzmann_Dist_gamma(double eta, double gamma, double Te);
 
 //==================================================================================================
-// 
+// kinematic boost model
+//==================================================================================================
+double FullKinematicBoost_Dist(double eta, double mup, double phip, double Te, double betac, double muc);
+double KinematicBoost_Dist(double eta, double Te, double betac, double muc, int l);
+double KinematicBoost_Dist_exp(double eta, double Te, double betac, double muc, int l, int betac_order);
+
+double FullKinematicModifiedJuttner(double eta, double mup, double phip, double Te, double betac, double muc);
+double Norm_FullKinematicModifiedJuttner(double Te, double betac, double muc);
+
+//==================================================================================================
 // Different models for temperature distributions
-//
 //==================================================================================================
 double CosmicRay_Dist(double eta, double alpha = 2.5, double p1 = 0.1, double p2 = 10.0);
 
