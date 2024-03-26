@@ -12,6 +12,10 @@
 // below. Alternatively one can call it with a start file. Not all functions of SZpack are called
 // explicitly. For more options see 'SZpack.h'
 //
+// The early functions use easy access output functions to handle creating the data output files
+// from the code base. Later examples show a more direct handling of the raw data as examples of 
+// functionality a user may wish to add. 
+//
 //==================================================================================================
 //
 // Author: Jens Chluba & Elizabeth Lee
@@ -102,7 +106,7 @@ int main(int narg, char *args[])
     // Calculating the signal by a full 5-dimensional integral.
     // This is the slowest setting, and even slower with runmode of "full". It is also the most 
     // 'accurate', however the accuracy of the other methods are fully documented. Normally this is 
-    // not the most relevant mode to use. See //TODO: for more details.
+    // not the most relevant mode to use.
     //==============================================================================================
     if(parameters.mode=="5D")
     {
@@ -209,15 +213,6 @@ int main(int narg, char *args[])
     else if(parameters.mode=="MEANSYW")
     {
         output_SZ_distortion(modes.Means_Yweighted);
-    }
-
-    //==============================================================================================
-    //TODO: fix this 
-    //==============================================================================================
-    else if(parameters.mode=="Kernel")
-    {
-        //output_SZ_distortion(modes.Kernel);
-        //TODO: Sort this
     }
 
     //==============================================================================================

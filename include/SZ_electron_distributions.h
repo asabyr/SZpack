@@ -23,7 +23,6 @@
 #include "Integration_routines.h"
 #include "Patterson.h"
 
-//TODO: Fill in the sources for these
 //==================================================================================================
 // The electron momentum distribution for thermal electrons
 //==================================================================================================
@@ -42,6 +41,7 @@ double Norm_FullKinematicModifiedJuttner(double Te, double betac, double muc);
 
 //==================================================================================================
 // Different models for temperature distributions
+// As found in e.g., Ensslin & Kaiser (2000), Colafrancesco et al. (2003), Kaastra et al. (2009)
 //==================================================================================================
 double CosmicRay_Dist(double eta, double alpha = 2.5, double p1 = 0.1, double p2 = 10.0);
 

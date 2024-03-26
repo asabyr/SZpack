@@ -69,7 +69,8 @@ The varied background (VB) formulation follows that of Lee, Chluba & Holder, 202
 The multipole kernel formulation follows that of Lee & Chluba, 2024.
 
 A full documentation is in progress and will be added to this repository when it is complete.
-The python doc-strings can all be accessed via calling help(pySZpack_function).
+The python doc-strings can all be accessed via calling help(pySZpack_function), and examples of 
+the pySZpack functionality can be found in ./python/PySZpack.ipynb.
 
 //==================================================================================================
 
