@@ -1,0 +1,203 @@
+## SZpack version 2.0.0 (Mar 2024)	
+
+**Author**: J. Chluba (CITA, University of Toronto and Johns Hopkins University).  
+        Python tools were originally developed by Eric R. Switzer (CITA).  
+        Version 2.0.0 developed by E. Lee (JBCA, University of Manchester)  
+
+All rights reserved. No guarantee for the correctness of the outputs is given!
+
+---  
+**Requirements**:  
+C++11 or later.  
+GSL-library 1.13 or later (download at http://www.gnu.org/software/gsl/)  
+**Python Wrapper**:  
+pybind11 (can be installed through pip or conda or other methods. instructions at 
+https://pybind11.readthedocs.io/en/stable/installing.html)
+
+---
+**License**:  
+This code and all contained libraries and subroutines can be used free of charge provided that:
+
+1. their use will be acknowledged in publications
+2. publications will cite the papers of  
+   - Chluba, Nagai, Sazonov, Nelson, MNRAS, 2012 (arXiv:1205.5778)  
+   - Chluba, Switzer, Nagai, Nelson, 2012, (arXiv:1211.3206)
+3. and the following papers are considered for citation:  
+   - Sazonov & Sunyaev, ApJ, 1998  
+   - Challinor & Lasenby, ApJ, 1998  
+   - Itoh et al., ApJ, 1998  
+   - Nozawa et al. ApJ, 1998  
+   - Nozawa et al. Nuovo Cimento B Series, 2006  
+   - Lee, Chluba & Holder, MNRAS, 2022  
+   - Lee & Chluba, 2024  
+4. bugs will be immediately reported to SZpack.code@gmail.com
+
+---
+
+**Description**:
+
+This repository contains the software package SZpack which allows computation of the thermal and 
+kinematic SZ effect. Both explicit numerical integration as well as approximate representation of 
+the SZ signals can be obtained. Variations of the electron temperature and bulk velocity along the 
+line-of-sight can be included. Depending on the routine, calculations are carried out in the 
+cluster frame or CMB rest frame. The SZ signal in the observer frame is then obtained by 
+Lorentz-transformation.
+
+At the moment the following approximations are generally made:  
+   - computations are performed in the single-scattering approximation  
+   - polarization effects are neglected  
+   - the electron distribution function is assumed to be thermal
+    
+For details we refer to `CNSN, 2012, arXiv:1205.5778` and `CSNN, 2012, arXiv:1211.3206`.  
+
+The varied background (VB) formulation follows that of `Lee, Chluba & Holder, 2022, arXiv:2112.10666`  
+The multipole kernel (MK) formulation follows that of `Lee & Chluba, 2024`.
+
+A full documentation is in progress and will be added to this repository when it is complete.  
+The python doc-strings can all be accessed via calling `help(pySZpack_function)`, and examples of 
+the pySZpack functionality can be found in `./python/PySZpack.ipynb`.
+
+---
+
+*Update (24.03.2024 | SZpack v2.0.0)*  
+ - Inclusion of Multipole kernel and varied background formulations.
+
+*Update (12.08.2021 | SZpack v2.0.0 prerelease)*  
+ - large structural overhaul.
+ - python package reworked into a complete wrapper of the code.
+
+*Update (17.09.2013 | SZpack v1.1.1)*  
+ - small updates of functions  
+ - two new runmodes to show importance of relativistic corrections (see './run_SZpack.cpp')  
+ - fixed bug because of betac^2 P_2(muc) == beta_para^2 - beta_perp^2/2  
+ - fixed bug for combo routine an beta_para<0 (thanks to John ZuHone & Tony Mroczkowski!)  
+
+*Update (22.12.2012 | SZpack v1.1)*  
+ - run_SZpack: new runmodes 'CNSNopt', 'COMBO', 'ACC', 'MEAN', 'NULL', 'DERIVS', 'TWOT'  
+ - added temperature-velocity moment method for smooth profiles according to CSNN, 2012  
+ - introduced combo function that allows computing the SZ signal over a wide range of Te  
+ - added function that minimizes the number of temperature terms for given accuracy goal   
+ - added Python bindings for main SZpack functions  
+ - computation of the SZ null and temperature derivative functions included   
+ - changed definition of S^kin; temperature-independent terms are fully canceled in basis  
+ - added basis functions expressed in the CMB rest frame  
+
+*First release (04.06.2012 | SZpack v1.0)*  
+ - initial version of SZpack with four main functions  
+ - executable is created to run these modes with different settings  
+ - different examples are given in 'run_SZpack.cpp'
+
+---
+
+**Basic Structure**:
+
+SZpack contains several routines that were developed at CITA (Spring 2012) with extensions developed
+both at CITA and JHU. The main (approved) functions of the library are defined in `SZpack.h` and 
+`SZpack.cpp`. A large parameters structure can be found in `Parameters.h` and `Parameters.cpp`.
+
+./Tools $~~~~~~~~~~~~~~~~~~~~$ contains simple support functions like relativistic Maxwell-Boltzmann distribution 
+              or derivatives of a Planck function. Also integration routines and physical constants 
+              can be found there.
+
+./Tools/Cosmology  $~$     contains the parameters structure which can be used to set the variables to 
+              use in any of our calculations.
+              
+./include  
+./src $~~~~~~~~~~~~~~~~~~~~~~~~$ contains the main header and source files for the different SZ-routines
+
+./outputs $~~~~~~~~~~~~~~~~$ default directory for output
+
+./runfiles $~~~~~~~~~~~~~~~~~$ some example runfile with parameters to call 'run_SZpack'
+
+./python $~~~~~~~~~~~~~~~~~$ a full pybind11 python wrapper can be found here. An exploration of the python 
+              functionality can be found in PySZpack.ipynb.
+
+---
+
+**Installation**:
+
+To compile the code follow the following steps:
+
+1. in 'Makefile.in' set 'CC' to the C++ compiler that should be used. 'CXXFLAGS' might have to 
+    be adjusted accordingly.
+2. The variables 'GSL_INC_PATH' and 'GSL_LIB_PATH' have to be set to the directories that host  
+     the include-files and lib of the GSL-library, respectively. Also the name ('GSL=gsl') of the 
+     GSL-lib should be adjusted, if necessary. In some cases it may be required to also link 
+     the library 'libgslcblas.a'. 
+3. type 'make' to compile the code. This creates the executable 'run_SZpack' and the       library 'libSZpack.a'
+4. type 'make pySZpack' to compile the python wrapper. This installs a python package called       'SZpack'. Pybind11 is needed to compile this. Some warnings may appear during compilation, but 
+      they can currently be ignored.
+
+To clean up type 'make clean' or 'make tidy', as well as 'make cleanall', 'make cleanallDEV',
+'make cleanpy' and 'make cleanallpy' (see 'Makefile' for difference)
+
+---
+
+**Running SZpack**:
+
+SZpack routines can be tested by invoking 
+
+`./run_SZpack` 
+
+In this case the default parameters set at the beginning of the main function of 'SZpack.cpp' 
+are used. Output will be generated in './outputs'. The files-names indicate the runmode (see below).
+Parameters used to compute the output are saved in the header of the file. There also a more 
+detailed description of the output can be found.
+
+Several different runmodes are available. These are
+
+*5D* $~~~~~~~~~~~$ : full 5-dimensional collision integral is evaluated. Depending on the setting this takes
+           some time. This routine is only recommended for testing and development.
+
+*3D* $~~~~~~~~~~~$ : symmetries were used to reduced the dimensionality of the collision integral up to second
+           order in the cluster velocity to 3-dimensions. The remaining integrals are carried out
+           numerically. This routine is already rather fast.
+
+*ASYM* $~~~~~~$ : asymptotic expansions similar to Itoh et al, 1998 and Nozawa et al. 2006 are used to
+           compute the SZ signals. These routines are very fast but the precision decreases
+           for Te > 5-10 keV
+
+*CNSN* $~~~~~~$ : improved basis functions according to Chluba et al. 2012 are used. These routines are
+           very fast and extremely high precision can be obtained for 2keV < Te < 75 keV
+
+*CNSNopt* $~$ : optimized choice of CNSN basis functions to minimize the number of moments. For more 
+           details we refer to CSNN2012, 'SZpack.h' and examples in 'run_SZpack.cpp'.
+
+*COMBO* $~~~$ : combination of asymptotic expansion + basis functions of CNSN/CSNN 2012. This function 
+           should give very precise results for the SZ signal at temperatures Te < 75keV
+
+*ACC* $~~~~~~~~~$ : mode to check the precision of the basis function. Settings should be changed directly  
+           in function compute_precision_of_basis()
+
+*MEAN* $~~~~~~$ : SZ distortion using expansion around mean values according to CSNN 2012 expansion. This 
+           function uses parameters p={tau, TeSZ, betapara, omega^(1..3), sigma^(1..3), beta^2perp, kappa}
+           as defined in CSNN2012.
+
+*NULL* $~~~~~~~$ : compute null of SZ signal for some examples
+
+*DERIVS* $~~~~$ : compute derivatives of SZ signal for some examples
+
+*TWOT* $~~~~~~$ : SZ signal for two-temperature case
+
+The different runmodes can be activated by invoking, e.g., 
+`./run_SZpack 5D`   or   `./run_SZpack CNSN ./runfiles/parameters.dat`
+where in the last case the parameters of the file './runfiles/parameters.dat' are used. An example 
+parameter-file is given with explanation of the parameters. Some of the parameters are directly set
+or overwritten inside run_SZpack for settings 'ACC' - 'TWOT'. We refer to 'run_SZpack.cpp' for details.
+
+---
+
+**Additional Comments**:
+
+By default the kinematic corrections are treated by explicitly imposing Lorentz-invariance of 
+the scattering optical depth (see Chluba et al. 2012). However, SZpack allows changing to the 
+convention of Itoh et al, 1998 & Nozawa et al. 2006. This can be acheived by calling
+`setConvention(true);` 
+prior to the execution of the main routines (see main-function in 'run_SZpack.cpp' for example).
+Similarly, the convention of Chluba et al. 2012 can be restored by calling
+`setConvention(false);`
+
+Similarly, the main routines residing in './src' have additional features that can be activated or
+changed. We refer the user to the header and source files of these different routines.
+
+---
